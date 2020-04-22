@@ -39,8 +39,10 @@ class Game
     print "Clues: "
     guess_arr.each_with_index do |guess_digit, index1|
       code_arr.each_with_index do |code_digit, index2|
-        if code_digit == guess_digit
-          print index1 == index2 ? colorize("!") : colorize("*")
+        if code_digit == guess_digit && index1 == index2
+          print colorize("!")
+        elsif code_digit == guess_digit && index1 != index2
+          print colorize("*")
           break
         end
       end

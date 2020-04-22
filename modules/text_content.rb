@@ -14,7 +14,7 @@ module TextContent
 
     The code is composed of 6 numbers:
 
-    1 | 2 | 3 | 4 | 5 | 6
+    #{colorize("1")}#{colorize("2")}#{colorize("3")}#{colorize("4")}#{colorize("5")}#{colorize("6")}
 
     HEREDOC
   end
