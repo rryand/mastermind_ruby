@@ -20,7 +20,7 @@ class Game
     puts section(:breaker)
     computer.generate_code
     (1..12).each do |turn|
-      puts "\e[4mTurn #{turn}\e[0m:\n "
+      puts "\e[4mTurn #{turn}\e[0m:"
       print_guess(player)
       print_clues(computer.code, player.guess)
       if player.guess == computer.code
@@ -44,20 +44,21 @@ class Game
     exact, same = exact_and_same_code(code, guess)
     exact.times { print colorize("!") }
     same.times { print colorize("*") }
-    puts "\n"
+    puts "\n "
   end
 
   def exact_and_same_code(code, guess)
     exact = 0
     same = 0
+    guess_arr = guess.split("")
     code_arr = code.split("")
     (1..2).each do |x|
       code_arr.each_with_index do |code_digit, index|
-        if code_digit == guess[index] && x == 1
+        if code_digit == guess_arr[index] && x == 1
           exact += 1
           code_arr[index] = "a"
-          guess[index] = "b"
-        elsif guess.include?(code_digit) && x == 2
+          guess_arr[index] = "b"
+        elsif guess_arr.include?(code_digit) && x == 2
           same += 1
         end
       end

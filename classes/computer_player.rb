@@ -1,6 +1,6 @@
 class ComputerPlayer
   attr_reader :code
-  
+
   def generate_code
     code = []
     4.times do
