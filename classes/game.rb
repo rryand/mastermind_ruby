@@ -20,9 +20,9 @@ class Game
     puts section(:breaker)
     computer.generate_code
     (1..12).each do |turn|
-      puts "\e[4mTurn #{turn}\e[0m:"
-      player.guess_code until guess_is_valid? (player.guess)
-      check_guess(computer.code, player.guess)
+      puts "\e[4mTurn #{turn}\e[0m:\n "
+      print_guess(player)
+      print_clues(computer.code, player.guess)
       if player.guess == computer.code
         puts game_message(:win)
         break
@@ -33,21 +33,36 @@ class Game
     puts game_message(:again)
   end
 
-  def check_guess(code, guess)
+  def print_guess(player)
+    print game_message(:guess)
+    player.guess_code until guess_is_valid? (player.guess)
+    player.guess.split("").each { |digit| print colorize(digit) }
+  end
+
+  def print_clues(code, guess)
+    print " Clues: "
+    exact, same = exact_and_same_code(code, guess)
+    exact.times { print colorize("!") }
+    same.times { print colorize("*") }
+    puts "\n"
+  end
+
+  def exact_and_same_code(code, guess)
+    exact = 0
+    same = 0
     code_arr = code.split("")
-    guess_arr = guess.split("")
-    print "Clues: "
-    guess_arr.each_with_index do |guess_digit, index1|
-      code_arr.each_with_index do |code_digit, index2|
-        if code_digit == guess_digit && index1 == index2
-          print colorize("!")
-        elsif code_digit == guess_digit && index1 != index2
-          print colorize("*")
-          break
+    (1..2).each do |x|
+      code_arr.each_with_index do |code_digit, index|
+        if code_digit == guess[index] && x == 1
+          exact += 1
+          code_arr[index] = "a"
+          guess[index] = "b"
+        elsif guess.include?(code_digit) && x == 2
+          same += 1
         end
       end
     end
-    puts "\n"
+    [exact, same]
   end
 
   def guess_is_valid?(guess)
