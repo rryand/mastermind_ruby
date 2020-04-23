@@ -3,6 +3,5 @@ class HumanPlayer
 
   def guess_code
     @guess = gets.chomp
-    print  "Guess: "
   end
 end

@@ -8,28 +8,48 @@ class Game
   include ColorizeText
 
   def play
+    clear_screen
     hal = ComputerPlayer.new
     player = HumanPlayer.new
-    puts instructions
-    breaker(player, hal, true)
+    show_menu(player, hal)
   end
 
   private
 
-  def breaker(player, computer, play)
-    while play
-      puts section(:breaker)
-      computer.generate_code
-      (1..12).each do |turn|
-        puts "\e[4mTurn #{turn}\e[0m:"
-        print_guess(player)
-        print_clues(computer.code, player.guess)
-        if player.guess == computer.code
-          puts game_message(:win)
-          break
-        end
+  def show_menu(player, computer)
+    choice = nil
+    clear_screen
+    puts menu
+    until ["1", "2", "3", "4"].include?(choice)
+      print "\e[1A\e[KChoice: "
+      choice = gets.chomp
+    end
+    choose_menu_choice(player, computer, choice)
+  end
+
+  def show_instructions
+    clear_screen
+    puts instructions
+    continue
+  end
+
+  def breaker(player, computer)
+    clear_screen
+    puts section(:breaker)
+    computer.generate_code
+    (1..12).each do |turn|
+      puts "\e[4mTurn #{turn}\e[0m:"
+      print_guess(player)
+      print_clues(computer.code, player.guess)
+      if player.guess == computer.code
+        puts game_message(:win)
+        break
       end
-      play = play_again?
+    end
+    if play_again?
+      breaker(player, computer) 
+    else
+      show_menu(player, computer)
     end
   end
 
@@ -37,6 +57,7 @@ class Game
     player.guess = nil
     print game_message(:guess)
     player.guess_code until guess_is_valid? (player.guess)
+    print  "Guess: "
     player.guess.split("").each { |digit| print colorize(digit) }
   end
 
