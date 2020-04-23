@@ -11,29 +11,30 @@ class Game
     hal = ComputerPlayer.new
     player = HumanPlayer.new
     puts instructions
-    breaker(player, hal)
+    breaker(player, hal, true)
   end
 
   private
 
-  def breaker(player, computer)
-    puts section(:breaker)
-    computer.generate_code
-    (1..12).each do |turn|
-      puts "\e[4mTurn #{turn}\e[0m:"
-      print_guess(player)
-      print_clues(computer.code, player.guess)
-      if player.guess == computer.code
-        puts game_message(:win)
-        break
-      else
-        player.guess = nil
+  def breaker(player, computer, play)
+    while play
+      puts section(:breaker)
+      computer.generate_code
+      (1..12).each do |turn|
+        puts "\e[4mTurn #{turn}\e[0m:"
+        print_guess(player)
+        print_clues(computer.code, player.guess)
+        if player.guess == computer.code
+          puts game_message(:win)
+          break
+        end
       end
+      play = play_again?
     end
-    puts game_message(:again)
   end
 
   def print_guess(player)
+    player.guess = nil
     print game_message(:guess)
     player.guess_code until guess_is_valid? (player.guess)
     player.guess.split("").each { |digit| print colorize(digit) }
@@ -64,6 +65,15 @@ class Game
       end
     end
     [exact, same]
+  end
+
+  def play_again?
+    choice = ""
+    until choice == "y" || choice == "n"
+      print game_message(:again)
+      choice = gets.chomp.downcase
+    end
+    choice == "y" ? true : false
   end
 
   def guess_is_valid?(guess)
