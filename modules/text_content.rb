@@ -4,23 +4,23 @@ module TextContent
     <<~HEREDOC
 
     #{LINE}
-    #{"Welcome to mastermind!".center(50)}
+    #{"Welcome to MASTERMIND!".center(50)}
     #{LINE}
 
     How to play:
     
     You play as the \e[4mcodebreaker\e[0m and you must guess
-    the computer's randomly generated 4-length code.
+    the computer's randomly generated code.
 
-    The code is composed of 6 numbers:
+    The code is composed of 4 digits ranging between:
 
-    #{colorize("1")}#{colorize("2")}#{colorize("3")}#{colorize("4")}#{colorize("5")}#{colorize("6")}
+    #{" " * 16}#{colorize("1")}#{colorize("2")}#{colorize("3")}#{colorize("4")}#{colorize("5")}#{colorize("6")}
 
     HEREDOC
   end
 
   def section(title)
-    text = title == :breaker ? "Code Breaker" : "Code Maker"
+    text = title == :breaker ? "CODE_BREAKER" : "Code Maker"
     "#{LINE}\n#{text.center(50)}\n#{LINE}"
   end
 
