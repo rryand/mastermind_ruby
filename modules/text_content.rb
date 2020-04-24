@@ -4,7 +4,6 @@ module TextContent
 
   def instructions
     <<~HEREDOC
-
     #{WELCOME_TEXT}
 
     \e[1;4mHow to play\e[0m:
@@ -31,12 +30,11 @@ module TextContent
   
   def menu
     <<~HEREDOC
-
     #{WELCOME_TEXT}
 
     Choose an option:
-      [1] Codemaker
-      [2] Codebreaker
+      [1] Codebreaker
+      [2] Codemaker
       [3] How to play
       [4] Exit
 
@@ -55,14 +53,15 @@ module TextContent
   end
 
   def section(title)
-    text = title == :breaker ? "CODE_BREAKER" : "Code Maker"
-    "#{LINE}\n#{text.center(50)}\n#{LINE}"
+    text = title == :breaker ? "CODE_BREAKER" : "CODE_MAKER"
+    "#{LINE}\n\e[1m#{text.center(50)}\e[0m\n#{LINE}"
   end
 
   def game_message(message)
     {
       guess: "Enter your guess: ",
-      win: "#{LINE}\n#{"You win! You outsmarted the computer!".center(50)}\n#{LINE}\n ",
+      code: "Enter your code: ",
+      human_win: "#{LINE}\n#{"You win! You outsmarted the computer!".center(50)}\n#{LINE}\n ",
       again: "\e[1A\e[KPlay again?(y/n) "
     }[message]
   end
@@ -76,17 +75,16 @@ module TextContent
     }[error]
   end
 
-  def choose_menu_choice(player, computer, choice)
+  def choose_menu_choice(choice)
     case choice
     when "1"
-      breaker(player, computer)
+      breaker
     when "2"
-      puts "UNDER CONSTRUCTION"
-      continue
-      show_menu(player, computer)
+      maker
+      show_menu
     when "3"
       show_instructions
-      show_menu(player, computer)
+      show_menu
     else
       return
     end

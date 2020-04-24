@@ -9,14 +9,14 @@ class Game
 
   def play
     clear_screen
-    hal = ComputerPlayer.new
-    player = HumanPlayer.new
-    show_menu(player, hal)
+    @computer = ComputerPlayer.new
+    @player = HumanPlayer.new
+    show_menu
   end
 
   private
 
-  def show_menu(player, computer)
+  def show_menu
     choice = nil
     clear_screen
     puts menu
@@ -24,7 +24,7 @@ class Game
       print "\e[1A\e[KChoice: "
       choice = gets.chomp
     end
-    choose_menu_choice(player, computer, choice)
+    choose_menu_choice(choice)
   end
 
   def show_instructions
@@ -33,43 +33,66 @@ class Game
     continue
   end
 
-  def breaker(player, computer)
+  def breaker
     clear_screen
     puts section(:breaker)
-    computer.generate_code
+    @computer.generate_code
+    puts "DEBUG: code: #{@computer.code}"
     (1..12).each do |turn|
       puts "\e[4mTurn #{turn}\e[0m:"
-      print_guess(player)
-      print_clues(computer.code, player.guess)
-      if player.guess == computer.code
+      print game_message(:guess)
+      print_guess(@player)
+      print_clues(@computer.code, @player.code)
+      if @player.code == @computer.code
         puts game_message(:win)
         break
       end
     end
-    if play_again?
-      breaker(player, computer) 
-    else
-      show_menu(player, computer)
+    breaker if play_again?
+    show_menu
+  end
+
+  def maker
+    clear_screen
+    puts section(:maker)
+    print game_message(:code)
+    @player.make_code until code_is_valid?(@player.code)
+    (1..12).each do |turn|
+      puts "\e[4mTurn #{turn}\e[0m:                     "
+      print_guess(@computer, true)
+      print_clues(@player.code, @computer.code, true)
+      if @player.code == @computer.code
+        puts game_message(:ai_win)
+        break
+      end
+      continue
     end
+    @player.code = nil
+    @computer.exact_index_pairs = {}
+    maker if play_again?
+    show_menu
   end
 
-  def print_guess(player)
-    player.guess = nil
-    print game_message(:guess)
-    player.guess_code until guess_is_valid? (player.guess)
-    print  "Guess: "
-    player.guess.split("").each { |digit| print colorize(digit) }
+  def print_guess(player, ai_player = false)
+    player.code = nil
+    player.guess_code until code_is_valid?(player.code)
+    if ai_player
+      print  "Computer's Guess: "
+    else
+      print "Guess: "
+    end
+    player.code.split("").each { |digit| print colorize(digit) }
   end
 
-  def print_clues(code, guess)
+  def print_clues(code, guess, ai_player = false)
     print " Clues: "
-    exact, same = exact_and_same_code(code, guess)
+    exact, same = exact_and_same_code(code, guess, ai_player)
     exact.times { print colorize("!") }
     same.times { print colorize("*") }
     puts "\n "
   end
 
-  def exact_and_same_code(code, guess)
+  def exact_and_same_code(code, guess, ai_player = false)
     exact = 0
     same = 0
     guess_arr = guess.split("")
@@ -80,6 +103,7 @@ class Game
           exact += 1
           code_arr[index] = "a"
           guess_arr[index] = "b"
+          @computer.exact_index_pairs[index] = code_digit if ai_player
         elsif guess_arr.include?(code_digit) && x == 2
           same += 1
         end
@@ -97,16 +121,16 @@ class Game
     choice == "y" ? true : false
   end
 
-  def guess_is_valid?(guess)
-    if guess.nil?
+  def code_is_valid?(code)
+    if code.nil?
       false
-    elsif guess == ""
+    elsif code == ""
       puts game_error(:empty_guess)
       false
-    elsif guess.length != 4
+    elsif code.length != 4
       puts game_error(:incorrect_length)
       false
-    elsif !guess.split("").all? { |x| "123456".include?(x) }
+    elsif !code.split("").all? { |x| "123456".include?(x) }
       puts game_error(:invalid_digit)
       false
     else 

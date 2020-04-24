@@ -1,7 +1,14 @@
 class HumanPlayer
-  attr_accessor :guess
+  attr_accessor :code
 
   def guess_code
-    @guess = gets.chomp
+    @code = gets.chomp
+  end
+
+  def make_code
+    code = ""
+    code = gets.chomp
+    puts "DEBUG: code: #{code}"
+    @code = code
   end
 end
