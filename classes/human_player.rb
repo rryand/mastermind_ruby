@@ -8,7 +8,6 @@ class HumanPlayer
   def make_code
     code = ""
     code = gets.chomp
-    puts "DEBUG: code: #{code}"
     @code = code
   end
 end

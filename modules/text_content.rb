@@ -62,7 +62,10 @@ module TextContent
       guess: "Enter your guess: ",
       code: "Enter your code: ",
       human_win: "#{LINE}\n#{"You win! You outsmarted the computer!".center(50)}\n#{LINE}\n ",
-      again: "\e[1A\e[KPlay again?(y/n) "
+      ai_win: "#{LINE}\n#{"The computer won. Better luck next time!".center(50)}\n#{LINE}\n ",
+      again: "\e[1A\e[KPlay again?(y/n) ",
+      breaker: "You are the \e[4mcodebreaker\e[0m. Try to break the AI's\ncode!\n ",
+      maker: "You are the \e[4mcodemaker\e[0m. Try to make a code that the\ncomputer wouldn't guess!\n "
     }[message]
   end
 

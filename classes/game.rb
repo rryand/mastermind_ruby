@@ -36,16 +36,18 @@ class Game
   def breaker
     clear_screen
     puts section(:breaker)
+    puts game_message(:breaker)
     @computer.generate_code
-    puts "DEBUG: code: #{@computer.code}"
     (1..12).each do |turn|
       puts "\e[4mTurn #{turn}\e[0m:"
       print game_message(:guess)
       print_guess(@player)
       print_clues(@computer.code, @player.code)
       if @player.code == @computer.code
-        puts game_message(:win)
+        puts game_message(:human_win)
         break
+      elsif turn == 12
+        puts game_message(:ai_win)
       end
     end
     breaker if play_again?
@@ -55,6 +57,7 @@ class Game
   def maker
     clear_screen
     puts section(:maker)
+    puts game_message(:maker)
     print game_message(:code)
     @player.make_code until code_is_valid?(@player.code)
     (1..12).each do |turn|
@@ -63,6 +66,9 @@ class Game
       print_clues(@player.code, @computer.code, true)
       if @player.code == @computer.code
         puts game_message(:ai_win)
+        break
+      elsif turn == 12
+        puts game_message(:human_win)
         break
       end
       continue
@@ -86,15 +92,15 @@ class Game
 
   def print_clues(code, guess, ai_player = false)
     print " Clues: "
-    exact, same = exact_and_same_code(code, guess, ai_player)
+    exact, right = exact_and_same_code(code, guess, ai_player)
     exact.times { print colorize("!") }
-    same.times { print colorize("*") }
+    right.times { print colorize("*") }
     puts "\n "
   end
 
   def exact_and_same_code(code, guess, ai_player = false)
     exact = 0
-    same = 0
+    right = 0
     guess_arr = guess.split("")
     code_arr = code.split("")
     (1..2).each do |x|
@@ -105,11 +111,12 @@ class Game
           guess_arr[index] = "b"
           @computer.exact_index_pairs[index] = code_digit if ai_player
         elsif guess_arr.include?(code_digit) && x == 2
-          same += 1
+          right += 1
+          @computer.right_digits << code_digit if ai_player
         end
       end
     end
-    [exact, same]
+    [exact, right]
   end
 
   def play_again?
