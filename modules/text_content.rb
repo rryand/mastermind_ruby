@@ -1,6 +1,6 @@
 module TextContent
   LINE = '-' * 50
-  WELCOME_TEXT = "#{LINE}\n#{"Welcome to \e[1;5mMASTERMIND!\e[0m".center(60)}\n#{LINE}"
+  WELCOME_TEXT = "#{LINE}\n#{"Welcome to \e[1mMASTERMIND!\e[0m".center(60)}\n#{LINE}"
 
   def instructions
     <<~HEREDOC
@@ -43,7 +43,7 @@ module TextContent
   end
 
   def continue
-    print "Press any key to continue..."
+    print "Press enter to continue..."
     gets
     print "\e[1A\r"
   end
