@@ -1,36 +1,20 @@
 require_relative "../modules/text_content"
 require_relative "../modules/colorize_text"
+require_relative "../modules/game_display"
 require_relative "human_player"
 require_relative "computer_player"
 
 class Game
-  include TextContent
-  include ColorizeText
+  include TextContent, ColorizeText, GameDisplay
 
   def play
+    clear_screen
     @computer = ComputerPlayer.new
     @player = HumanPlayer.new
     show_menu
   end
 
   private
-
-  def show_menu
-    choice = nil
-    clear_screen
-    puts menu
-    until ["1", "2", "3", "4"].include?(choice)
-      print "\e[1A\e[KChoice: "
-      choice = gets.chomp
-    end
-    choose_menu_choice(choice)
-  end
-
-  def show_instructions
-    clear_screen
-    puts instructions
-    continue
-  end
 
   def breaker
     clear_screen
@@ -46,9 +30,11 @@ class Game
         puts game_message(:human_win)
         break
       elsif turn == 12
+        puts game_message(:ai_code)
         puts game_message(:ai_win)
       end
     end
+    @player.code = nil
     breaker if play_again?
     show_menu
   end
@@ -81,11 +67,8 @@ class Game
   def print_guess(player, ai_player = false)
     player.code = nil
     player.guess_code until code_is_valid?(player.code)
-    if ai_player
-      print  "Computer's Guess: "
-    else
-      print "Guess: "
-    end
+    print  "Computer's " if ai_player
+    print "Guess: "
     player.code.split("").each { |digit| print colorize(digit) }
   end
 

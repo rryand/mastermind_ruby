@@ -1,6 +1,6 @@
 module TextContent
   LINE = '-' * 50
-  WELCOME_TEXT = "#{LINE}\n#{"Welcome to \e[1mMASTERMIND!\e[0m".center(60)}\n#{LINE}"
+  WELCOME_TEXT = "#{LINE}\n#{"Welcome to \e[1;5mMASTERMIND!\e[0m".center(60)}\n#{LINE}"
 
   def instructions
     <<~HEREDOC
@@ -63,6 +63,7 @@ module TextContent
       code: "Enter your code: ",
       human_win: "#{LINE}\n#{"You win! You outsmarted the computer!".center(50)}\n#{LINE}\n ",
       ai_win: "#{LINE}\n#{"The computer won. Better luck next time!".center(50)}\n#{LINE}\n ",
+      ai_code: "The computer's code is '#{@computer.code}'.",
       again: "\e[1A\e[KPlay again?(y/n) ",
       breaker: "You are the \e[4mcodebreaker\e[0m. Try to break the AI's\ncode!\n ",
       maker: "You are the \e[4mcodemaker\e[0m. Try to make a code that the\ncomputer wouldn't guess!\n "
@@ -76,20 +77,5 @@ module TextContent
       incorrect_length: "Your guess should be 4 digits long.",
       invalid_digit: "All digits should be between 1-6."
     }[error]
-  end
-
-  def choose_menu_choice(choice)
-    case choice
-    when "1"
-      breaker
-    when "2"
-      maker
-      show_menu
-    when "3"
-      show_instructions
-      show_menu
-    else
-      return
-    end
   end
 end
