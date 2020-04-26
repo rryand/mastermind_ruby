@@ -8,7 +8,6 @@ class Game
   include ColorizeText
 
   def play
-    clear_screen
     @computer = ComputerPlayer.new
     @player = HumanPlayer.new
     show_menu
